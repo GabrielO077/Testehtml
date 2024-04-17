@@ -25,6 +25,17 @@
       console.log(`Conteúdo da mensagem: ${message.toString()}`);
       document.getElementById("message").innerHTML = message.toString();
     });
+
+    // Envia uma mensagem para o tópico quando o botão "Enviar" for clicado
+    const sendButton = document.createElement("button");
+    sendButton.innerHTML = "Enviar";
+    sendButton.addEventListener("click", () => {
+      const input = prompt("Digite a mensagem a ser enviada:");
+      if (input !== null) {
+        client.publish(mqtt_topic, input);
+      }
+    });
+    document.body.appendChild(sendButton);
   </script>
 </body>
 </html>
