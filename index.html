@@ -13,7 +13,7 @@
     const mqtt_server = "test.mosquitto.org";
     const mqtt_topic = "esp8266/output";
 
-    const client = new Paho.MQTT.Client(mqtt_server, 80, "clientId");
+    const client = new Paho.MQTT.Client(mqtt_server, 443, "clientId");
 
     client.onConnectionLost = (responseObject) => {
       console.log("Conexão perdida: " + responseObject.errorMessage);
@@ -24,7 +24,7 @@
       document.getElementById("message").innerHTML = message.payloadString;
     };
 
-    client.connect({ onSuccess: onConnect });
+    client.connect({ useSSL: true, onSuccess: onConnect });
 
     function onConnect() {
       console.log("Conectado ao broker MQTT.");
