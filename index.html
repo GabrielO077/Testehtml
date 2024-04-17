@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>MQTT Example</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mqtt/3.1.8/mqtt.min.js"></script>
+</head>
+<body>
+  <h1>MQTT Example</h1>
+  <p id="message"></p>
+  <script>
+    // Atualize esses valores com o endereço IP e o tópico do seu broker MQTT
+    const mqtt_server = "test.mosquitto.org";
+    const mqtt_topic = "esp8266/output";
+
+    const client = mqtt.connect(`ws://${mqtt_server}:80/mqtt`);
+
+    client.on("connect", () => {
+      console.log("Conectado ao broker MQTT.");
+      client.subscribe(mqtt_topic);
+    });
+
+    client.on("message", (topic, message) => {
+      console.log(`Mensagem recebida no tópico: ${topic}`);
+      console.log(`Conteúdo da mensagem: ${message.toString()}`);
+      document.getElementById("message").innerHTML = message.toString();
+    });
+  </script>
+</body>
+</html>
