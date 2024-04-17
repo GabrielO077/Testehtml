@@ -13,29 +13,23 @@
     const mqtt_server = "test.mosquitto.org";
     const mqtt_topic = "esp8266/output";
 
-    const client = mqtt.connect(`ws://${mqtt_server}:80/mqtt`);
+    const client = new Paho.MQTT.Client(mqtt_server, 80, "clientId");
 
-    client.on("connect", () => {
+    client.onConnectionLost = (responseObject) => {
+      console.log("Conexão perdida: " + responseObject.errorMessage);
+    };
+
+    client.onMessageArrived = (message) => {
+      console.log("Mensagem recebida: " + message.payloadString);
+      document.getElementById("message").innerHTML = message.payloadString;
+    };
+
+    client.connect({ onSuccess: onConnect });
+
+    function onConnect() {
       console.log("Conectado ao broker MQTT.");
       client.subscribe(mqtt_topic);
-    });
-
-    client.on("message", (topic, message) => {
-      console.log(`Mensagem recebida no tópico: ${topic}`);
-      console.log(`Conteúdo da mensagem: ${message.toString()}`);
-      document.getElementById("message").innerHTML = message.toString();
-    });
-
-    // Envia uma mensagem para o tópico quando o botão "Enviar" for clicado
-    const sendButton = document.createElement("button");
-    sendButton.innerHTML = "Enviar";
-    sendButton.addEventListener("click", () => {
-      const input = prompt("Digite a mensagem a ser enviada:");
-      if (input !== null) {
-        client.publish(mqtt_topic, input);
-      }
-    });
-    document.body.appendChild(sendButton);
+    }
   </script>
 </body>
 </html>
