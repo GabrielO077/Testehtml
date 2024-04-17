@@ -2,34 +2,29 @@
 <html>
 <head>
   <meta charset="UTF-8">
-  <title>MQTT Example</title>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/paho-mqtt/1.0.1/mqttws31.min.js"></script>
+  <title>MQTT Test</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mqtt/3.1.1/mqtt.min.js"></script>
 </head>
 <body>
-  <h1>MQTT Example</h1>
-  <p id="message"></p>
+  <h1>MQTT Test</h1>
+  <button id="btn-send">Send Message</button>
   <script>
-    // Atualize esses valores com o endereço IP e o tópico do seu broker MQTT
-    const mqtt_server = "test.mosquitto.org";
-    const mqtt_topic = "esp8266/output";
-
-    const client = new Paho.MQTT.Client(mqtt_server, 443, "clientId");
-
-    client.onConnectionLost = (responseObject) => {
-      console.log("Conexão perdida: " + responseObject.errorMessage);
-    };
-
-    client.onMessageArrived = (message) => {
-      console.log("Mensagem recebida: " + message.payloadString);
-      document.getElementById("message").innerHTML = message.payloadString;
-    };
-
-    client.connect({ useSSL: true, onSuccess: onConnect });
-
-    function onConnect() {
-      console.log("Conectado ao broker MQTT.");
-      client.subscribe(mqtt_topic);
-    }
+    const broker = 'test.mosquitto.org';
+    const port = 8081;
+    const topic = 'teste/esp8266';
+    const client = mqtt.connect(`ws://${broker}:${port}/mqtt`);
+    client.on('connect', () => {
+      console.log('Connected to MQTT broker');
+      client.subscribe(topic);
+    });
+    client.on('message', (topic, message) => {
+      console.log(`Received message on topic ${topic}: ${message.toString()}`);
+    });
+    document.getElementById('btn-send').addEventListener('click', () => {
+      const message = 'Hello from HTML';
+      client.publish(topic, message);
+      console.log(`Sent message on topic ${topic}: ${message}`);
+    });
   </script>
 </body>
 </html>
